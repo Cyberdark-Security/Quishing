@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conferencia Ciberseguridad - Recursos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            animation: slideIn 0.6s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            border-radius: 50%;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .warning {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        
+        .warning.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .data-collected {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+            font-family: monospace;
+            font-size: 14px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .reveal {
+            display: none;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .reveal.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .reveal h3 {
+            margin-bottom: 15px;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">CS</div>
+        <h1>Acceso a Recursos</h1>
+        <p>Para acceder a las diapositivas y material adicional de la conferencia, por favor ingresa tus credenciales corporativas.</p>
+        
+        <form id="phishingForm">
+            <div class="form-group">
+                <label for="email">Email Corporativo:</label>
+                <input type="email" id="email" name="email" required placeholder="tu.nombre@empresa.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Contraseña:</label>
+                <input type="password" id="password" name="password" required placeholder="Tu contraseña">
+            </div>
+            
+            <button type="submit" class="btn">Acceder a Recursos</button>
+        </form>
+        
+        <div id="warning" class="warning">
+            <strong>⚠️ ALTO - Esto fue una demostración de QRphishing</strong>
+            <p>Acabas de proporcionar información sensible a un sitio desconocido. Veamos qué datos recolecté sobre ti:</p>
+            <div id="collectedData" class="data-collected"></div>
+        </div>
+        
+        <div id="reveal" class="reveal">
+            <h3>🎯 Lección Aprendida</h3>
+            <p><strong>Nunca escanees códigos QR de fuentes desconocidas</strong>, especialmente si solicitan credenciales.</p>
+            <p><strong>Técnicas usadas en esta demo:</strong></p>
+            <ul>
+                <li>✓ QR Code malicioso</li>
+                <li>✓ Sitio web de phishing convincente</li>
+                <li>✓ Recolección de información del dispositivo</li>
+                <li>✓ Ingeniería social (contexto de "conferencia")</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Recolectar información del dispositivo/navegador
+        function collectDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                screen: `${screen.width}x${screen.height}`,
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timestamp: new Date().toLocaleString(),
+                referrer: document.referrer || 'Directo (QR Code)',
+                cookiesEnabled: navigator.cookieEnabled,
+                onlineStatus: navigator.onLine,
+                browserName: getBrowserName(),
+                deviceType: getDeviceType()
+            };
+            return info;
+        }
+        
+        function getBrowserName() {
+            const userAgent = navigator.userAgent;
+            if (userAgent.includes('Chrome')) return 'Chrome';
+            if (userAgent.includes('Firefox')) return 'Firefox';
+            if (userAgent.includes('Safari')) return 'Safari';
+            if (userAgent.includes('Edge')) return 'Edge';
+            return 'Desconocido';
+        }
+        
+        function getDeviceType() {
+            const userAgent = navigator.userAgent;
+            if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'Tablet';
+            if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) return 'Móvil';
+            return 'Escritorio';
+        }
+        
+        // Simular envío de datos y mostrar información recolectada
+        document.getElementById('phishingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const deviceInfo = collectDeviceInfo();
+            
+            // Simular "procesamiento"
+            const btn = document.querySelector('.btn');
+            btn.textContent = 'Procesando...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                // Mostrar advertencia y datos recolectados
+                document.getElementById('warning').classList.add('show');
+                
+                const collectedDataDiv = document.getElementById('collectedData');
+                collectedDataDiv.innerHTML = `
+                    <strong>📧 Email ingresado:</strong> ${email}<br>
+                    <strong>🔒 Contraseña:</strong> ${'*'.repeat(password.length)} (${password.length} caracteres)<br>
+                    <strong>📱 Dispositivo:</strong> ${deviceInfo.deviceType}<br>
+                    <strong>🌐 Navegador:</strong> ${deviceInfo.browserName}<br>
+                    <strong>🖥️ Sistema:</strong> ${deviceInfo.platform}<br>
+                    <strong>📍 Zona horaria:</strong> ${deviceInfo.timezone}<br>
+                    <strong>⏰ Timestamp:</strong> ${deviceInfo.timestamp}<br>
+                    <strong>🔗 Llegaste desde:</strong> ${deviceInfo.referrer}
+                `;
+                
+                setTimeout(() => {
+                    document.getElementById('reveal').classList.add('show');
+                }, 2000);
+                
+            }, 1500);
+        });
+        
+        // Recolectar estadísticas básicas al cargar la página
+        window.addEventListener('load', function() {
+            const deviceInfo = collectDeviceInfo();
+            // En un escenario real, esto se enviaría a un servidor
+            console.log('Información recolectada:', deviceInfo);
+        });
+    </script>
+</body>
+</html>
