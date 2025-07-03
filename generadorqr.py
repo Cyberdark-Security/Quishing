@@ -13,7 +13,7 @@ def create_phishing_qr(url, save_path="phishing_qr.png"):
         version=1,  # Controla el tamaño (1 es el más pequeño)
         error_correction=qrcode.constants.ERROR_CORRECT_L,  # ~7% error correction
         box_size=10,  # Tamaño de cada "caja" en píxeles
-        border=4,     # Grosor del borde
+        border=5,     # Grosor del borde
     )
     
     # Agregar la URL (reemplaza con tu URL real)
