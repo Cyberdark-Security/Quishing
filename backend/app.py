@@ -10,17 +10,30 @@ app = Flask(__name__)
 CORS(app)
 
 # Almacenamiento simple en archivo (para demo)
-DATA_FILE = 'demo_analytics.json'
+# CAMBIO: Usar /tmp para mayor compatibilidad con entornos de App Service
+DATA_FILE = '/tmp/demo_analytics.json'
 
 def load_data():
     if os.path.exists(DATA_FILE):
         with open(DATA_FILE, 'r') as f:
-            return json.load(f)
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                # Manejar caso de archivo JSON corrupto o vacío
+                return {'visits': [], 'submissions': []}
     return {'visits': [], 'submissions': []}
 
 def save_data(data):
+    # Asegurarse de que el directorio /tmp exista (aunque suele existir)
+    os.makedirs(os.path.dirname(DATA_FILE), exist_ok=True)
     with open(DATA_FILE, 'w') as f:
         json.dump(data, f, indent=2)
+
+# NUEVA RUTA: Endpoint para la URL raíz (/)
+@app.route('/')
+def home():
+    """Endpoint para la raíz del sitio, útil para comprobaciones de estado."""
+    return "Backend del laboratorio de QRphishing está funcionando correctamente."
 
 @app.route('/api/track-visit', methods=['POST'])
 def track_visit():
