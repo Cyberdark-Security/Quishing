@@ -1,12 +1,13 @@
-# backend_simple.py
 # Backend Flask para recolectar estadísticas de la demo (OPCIONAL)
 
 from flask import Flask, request, jsonify, render_template_string
+from flask_cors import CORS 
 from datetime import datetime
 import json
 import os
 
 app = Flask(__name__)
+CORS(app)
 
 # Almacenamiento simple en archivo (para demo)
 DATA_FILE = 'demo_analytics.json'
