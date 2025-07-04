@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Advertencia de Seguridad!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%); /* Fondo rojo para la advertencia */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .message-container {
+            background: rgba(255, 255, 255, 0.15); /* Blanco semitransparente */
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .main-message {
+            font-size: 2.5em; /* Texto muy grande */
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+
+        .secondary-message {
+            font-size: 1.3em;
+            color: #f8d7da; /* Un rojo más claro para contraste */
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .thank-you {
+            font-size: 1.1em;
+            font-style: italic;
+            color: #ffffff;
+            margin-top: 40px;
+        }
+
+        /* Estilo para el botón de regreso, si lo deseas */
+        .btn-back {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 25px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none; /* Quita el subrayado del enlace */
+            display: inline-block; /* Para que margin y padding funcionen bien */
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="message-container">
+        <p class="main-message">
+            Si fuera de verdad ya estarías con tus accesos comprometidos.
+        </p>
+        <p class="secondary-message">
+            Ojo, esto es un ejercicio de **QR PHISHING**. Por favor, ten mucha precaución. No des clic en sitios sospechosos o de personas que no conoces. Esto es una campaña de concienciación.
+        </p>
+        <p class="thank-you">
+            ¡Gracias por participar!
+        </p>
+        </div>
+</body>
+</html>
