@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Conferencia Ciberseguridad - Recursos</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7QbPyXlR5mrjYxBLxpg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
     <style>
         * {
             margin: 0;
@@ -163,6 +166,42 @@
             margin-bottom: 15px;
             color: #155724;
         }
+
+        /* **** PASO 3: AÑADIR ESTILOS CSS PARA LOS ÍCONOS AQUÍ **** */
+        .social-login-info {
+            margin-top: 25px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .social-login-info p {
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            color: #777;
+        }
+
+        .icon-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px; /* Espacio entre los iconos */
+            margin-bottom: 15px; /* Espacio debajo de los iconos */
+        }
+
+        .icon-list i {
+            font-size: 40px; /* Tamaño de los iconos */
+            color: #ccc; /* Color por defecto, si no se sobreescribe por la marca */
+            transition: color 0.3s ease;
+        }
+
+        /* Colores específicos para cada marca */
+        .icon-list .fa-google { color: #DB4437; } /* Rojo Google */
+        .icon-list .fa-microsoft { color: #2F2F2F; } /* Gris oscuro Microsoft */
+        .icon-list .fa-apple { color: #000000; } /* Negro Apple */
+
+        .icon-list i:hover {
+            transform: scale(1.1); /* Efecto al pasar el ratón */
+        }
+
     </style>
 </head>
 <body>
@@ -184,7 +223,17 @@
             
             <button type="submit" class="btn">Acceder a Recursos</button>
         </form>
-        
+
+        <div class="social-login-info">
+            <p>O inicia sesión con tu cuenta de:</p>
+            <div class="icon-list">
+                <i class="fab fa-google" title="Iniciar sesión con Google"></i>
+                
+                <i class="fab fa-microsoft" title="Iniciar sesión con Microsoft"></i>
+                
+                <i class="fab fa-apple" title="Iniciar sesión con Apple"></i>
+            </div>
+        </div>
         <div id="warning" class="warning">
             <strong>⚠️ ALTO - Esto fue una demostración de QRphishing</strong>
             <p>Acabas de proporcionar información sensible a un sitio desconocido. Veamos qué datos recolecté sobre ti:</p>
