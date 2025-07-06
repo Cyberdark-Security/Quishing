@@ -56,6 +56,7 @@
             color: white;
             font-size: 24px;
             font-weight: bold;
+            transition: background 0.5s ease;
         }
         
         h1 {
@@ -165,7 +166,6 @@
             color: #155724;
         }
 
-        /* Estilo para la imagen de opciones de inicio de sesión */
         .login-options-image {
             width: 100%; 
             max-width: 300px; 
@@ -174,16 +174,16 @@
             display: block; 
             margin-left: auto;
             margin-right: auto;
-            cursor: pointer; /* Indica que la imagen es clicable */
+            cursor: pointer;
         }
 
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">CS</div>
-        <h1>Acceso a Recursos</h1>
-        <p>Para acceder a las diapositivas y material adicional de la conferencia, por favor ingresa tus credenciales corporativas.</p>
+        <div class="logo" id="logo">CS</div>
+        <h1 id="mainTitle">Acceso a Recursos</h1>
+        <p id="mainIntro">Para acceder a las diapositivas y material adicional de la conferencia, por favor ingresa tus credenciales corporativas.</p>
         
         <form id="phishingForm">
             <div class="form-group">
@@ -295,16 +295,29 @@
         // Enviar datos de la sumisión al backend
         const submissionData = {
             email: email,
-            password: password, // Precaución: En demo ok, en real NUNCA enviar así
+            password: password,
             device_info: deviceInfo,
-            scenario: "Formulario_Directo" // Para diferenciar en las estadísticas
+            scenario: "Formulario_Directo"
         };
         await sendDataToBackend('/api/track-submission', submissionData);
 
         // Retraso para la UX y luego mostrar la advertencia
         setTimeout(() => {
+            // 1. Ocultamos los elementos originales del formulario
+            document.getElementById('mainTitle').style.display = 'none';
+            document.getElementById('mainIntro').style.display = 'none';
+            document.getElementById('phishingForm').style.display = 'none';
+            document.getElementById('ssoClickTrigger').style.display = 'none';
+            
+            // 2. (Opcional) Cambiamos el logo para un efecto más dramático
+            const logo = document.getElementById('logo');
+            logo.textContent = '⚠️';
+            logo.style.background = 'linear-gradient(45deg, #ffc107, #dc3545)';
+
+            // 3. Mostramos el panel de advertencia
             document.getElementById('warning').classList.add('show');
             
+            // 4. Llenamos el panel con los datos recolectados
             const collectedDataDiv = document.getElementById('collectedData');
             collectedDataDiv.innerHTML = `
                 <strong>📧 Email ingresado:</strong> ${email}<br>
@@ -317,30 +330,29 @@
                 <strong>🔗 Llegaste desde:</strong> ${deviceInfo.referrer}
             `;
             
+            // 5. Mostramos el panel con la lección aprendida después de un momento
             setTimeout(() => {
                 document.getElementById('reveal').classList.add('show');
-            }, 2000);
+            }, 1500);
             
         }, 1500);
     });
 
-    // NUEVO: Manejar el clic en la imagen SSO para simular un envío de formulario
+    // Manejar el clic en la imagen SSO para simular un envío de formulario
     document.getElementById('ssoClickTrigger').addEventListener('click', async function(e) {
-        e.preventDefault(); // Evita el comportamiento por defecto del enlace (que es navegar a #)
+        e.preventDefault();
 
         const deviceInfo = collectDeviceInfo();
         
-        // Simular un envío de formulario para el escenario SSO
         const ssoSubmissionData = {
-            email: "sso_click_simulado@ejemplo.com", // Puedes usar un email distintivo
-            password: "SSO_CLICK", // O una cadena distintiva para la contraseña
+            email: "sso_click_simulado@ejemplo.com",
+            password: "SSO_CLICK",
             device_info: deviceInfo,
-            scenario: "Clic_SSO" // Añade un campo para diferenciar este tipo de "envío"
+            scenario: "Clic_SSO"
         };
         
-        await sendDataToBackend('/api/track-submission', ssoSubmissionData); // Envía al mismo endpoint
+        await sendDataToBackend('/api/track-submission', ssoSubmissionData);
 
-        // Redirigir a la página de alerta después de simular el envío
         window.location.href = "alerta.html";
     });
     </script>
