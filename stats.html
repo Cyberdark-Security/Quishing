@@ -62,7 +62,6 @@
         } catch (error) {
             console.error("No se pudieron obtener las estadísticas:", error);
             const tableBody = document.getElementById('submissionsTableBody');
-            // El colspan vuelve a ser 3
             tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
         }
     }
@@ -79,27 +78,24 @@
         tableBody.innerHTML = ''; 
 
         if (!latestSubmissions || latestSubmissions.length === 0) {
-            // El colspan vuelve a ser 3
             tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
         } else {
             for (const submission of latestSubmissions) {
                 const row = document.createElement('tr');
-                const time = new Date(submission.timestamp).toLocaleTimeString('es-ES', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit'
-                });
+                
+                // --- CAMBIO PRINCIPAL AQUÍ ---
+                // Se usa toLocaleString para obtener fecha y hora completas.
+                const time = new Date(submission.timestamp).toLocaleString('es-ES');
+
                 const email = submission.email;
-                // Volvemos a extraer el tipo de dispositivo
                 const device = submission.device_info ? submission.device_info.deviceType : 'Desconocido';
 
-                // Volvemos a añadir la celda para el dispositivo
                 row.innerHTML = `<td>${time}</td><td>${email}</td><td>${device}</td>`;
                 tableBody.appendChild(row);
             }
         }
     }
-
+    
     window.onload = fetchStats;
     setInterval(fetchStats, 5000);
 </script>
