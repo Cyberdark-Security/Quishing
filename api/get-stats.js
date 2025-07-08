@@ -12,8 +12,8 @@ export default async function handler(request, response) {
     const [visitsResult, submissionsResult, latestSubmissionsResult] = await Promise.all([
       pool.query('SELECT COUNT(*) FROM visits'),
       pool.query('SELECT COUNT(*) FROM submissions'),
-      // --- CORRECCIÓN AQUÍ: Se eliminó "LIMIT 10" para obtener todos los registros ---
-      pool.query('SELECT email, timestamp FROM submissions ORDER BY timestamp DESC')
+      // Volvemos a pedir la columna device_info
+      pool.query('SELECT email, timestamp, device_info FROM submissions ORDER BY timestamp DESC')
     ]);
 
     const totalVisits = parseInt(visitsResult.rows[0].count, 10);

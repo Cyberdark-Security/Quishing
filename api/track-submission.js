@@ -12,18 +12,14 @@ export default async function handler(request, response) {
     return response.status(405).json({ message: 'Método no permitido' });
   }
 
-  // Aunque el frontend envíe más datos, solo extraemos los que necesitamos
-  const { email, scenario } = request.body;
+  // Volvemos a extraer device_info del cuerpo de la petición
+  const { email, scenario, device_info } = request.body;
 
   try {
-    // ---- CAMBIO IMPORTANTE ----
-    // Se eliminan 'password' y 'device_info' de la consulta SQL.
-    const query = 'INSERT INTO submissions (email, scenario) VALUES ($1, $2)';
-    
-    // ---- CAMBIO IMPORTANTE ----
-    // El array de valores ahora solo contiene las dos variables que vamos a guardar.
-    const values = [email, scenario];
-    
+    // Añadimos de nuevo la columna device_info a la consulta
+    const query = 'INSERT INTO submissions (email, scenario, device_info) VALUES ($1, $2, $3)';
+    const values = [email, scenario, device_info];
+
     await pool.query(query, values);
 
     response.status(200).json({ message: 'Datos guardados correctamente' });

