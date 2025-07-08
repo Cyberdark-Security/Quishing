@@ -29,5 +29,7 @@
         "env.bak{,/**}",
         "venv.bak{,/**}",
         ".vscode{,/**}"
-    ]
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/aa20242e-a765-41b3-bf54-fe06c3ae849a/resourceGroups/backend/providers/Microsoft.Web/sites/qr",
+    "appService.deploySubpath": "."
 }
