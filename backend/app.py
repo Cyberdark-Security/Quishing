@@ -81,7 +81,6 @@ def show_stats():
     <html>
     <head>
         <title>Demo Stats - Live</title>
-        <meta http-equiv="refresh" content="5">
         <style>
             body {{ font-family: Arial, sans-serif; margin: 20px; }}
             .stat-box {{ 
