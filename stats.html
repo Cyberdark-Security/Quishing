@@ -49,73 +49,69 @@
     </div>
 
     <script>
-        // #############################################################
-        // ##  INSTRUCCIONES: Edita los datos aquí abajo             ##
-        // ##  Puedes agregar más "visitas" y "submissions"        ##
-        // ##  para simular datos en vivo durante tu presentación.    ##
-        // #############################################################
-        const demoData = {
-            "visits": [
-                { "user_agent": "Chrome en Windows" },
-                { "user_agent": "Safari en iPhone" },
-                { "user_agent": "Chrome en Android" },
-                { "user_agent": "Firefox en Mac" }
-            ],
-            "submissions": [
-                {
-                    "timestamp": "2025-07-08T10:20:30.123Z",
-                    "email": "victima.uno@empresa.com",
-                    "device_info": { "deviceType": "Móvil" }
-                },
-                {
-                    "timestamp": "2025-07-08T10:22:45.456Z",
-                    "email": "empleado.descuidado@corporacion.net",
-                    "device_info": { "deviceType": "Escritorio" }
-                }
-            ]
-        };
+    // URL de tu API de Vercel donde obtendremos las estadísticas
+    const API_URL = 'https://quishing-ashy.vercel.app/api/get-stats';
 
-        // --- No necesitas editar nada debajo de esta línea ---
-
-        function updateStats() {
-            const visits = demoData.visits;
-            const submissions = demoData.submissions;
-
-            // Calcular estadísticas
-            const totalVisits = visits.length;
-            const totalSubmissions = submissions.length;
-            const conversion = totalSubmissions > 0 ? (totalSubmissions / totalVisits * 100) : 0;
-
-            // Actualizar el resumen
-            document.getElementById('totalVisits').textContent = totalVisits;
-            document.getElementById('totalSubmissions').textContent = totalSubmissions;
-            document.getElementById('conversionRate').textContent = `${conversion.toFixed(1)}%`;
-
-            // Actualizar la tabla de víctimas
+    // Función para obtener los datos más recientes del backend
+    async function fetchStats() {
+        try {
+            const response = await fetch(API_URL);
+            if (!response.ok) {
+                throw new Error(`Error al contactar el servidor: ${response.statusText}`);
+            }
+            const data = await response.json();
+            updateDashboard(data);
+        } catch (error) {
+            console.error("No se pudieron obtener las estadísticas:", error);
             const tableBody = document.getElementById('submissionsTableBody');
-            tableBody.innerHTML = ''; // Limpiar la tabla antes de llenarla
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:red;">Error al cargar los datos en vivo. Asegúrate de que el backend esté funcionando.</td></tr>`;
+        }
+    }
 
-            // Tomar las últimas 10 y poner la más nueva arriba
-            const latestSubmissions = submissions.slice(-10).reverse();
+    // Función para actualizar la interfaz con los nuevos datos
+    function updateDashboard(data) {
+        // Asumiendo que tu API devuelve un objeto como: { totalVisits: 50, totalSubmissions: 10, latestSubmissions: [...] }
+        const { totalVisits, totalSubmissions, latestSubmissions } = data;
 
-            if (latestSubmissions.length === 0) {
-                 tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
-            } else {
-                for (const submission of latestSubmissions) {
-                    const row = document.createElement('tr');
-                    
-                    const time = new Date(submission.timestamp).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                    const email = submission.email;
-                    const device = submission.device_info.deviceType || 'Desconocido';
+        // Calcular estadísticas
+        const conversion = totalVisits > 0 ? (totalSubmissions / totalVisits * 100) : 0;
 
-                    row.innerHTML = `<td>${time}</td><td>${email}</td><td>${device}</td>`;
-                    tableBody.appendChild(row);
-                }
+        // Actualizar el resumen
+        document.getElementById('totalVisits').textContent = totalVisits || 0;
+        document.getElementById('totalSubmissions').textContent = totalSubmissions || 0;
+        document.getElementById('conversionRate').textContent = `${conversion.toFixed(1)}%`;
+
+        // Actualizar la tabla de víctimas
+        const tableBody = document.getElementById('submissionsTableBody');
+        tableBody.innerHTML = ''; // Limpiar la tabla
+
+        if (!latestSubmissions || latestSubmissions.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Aún no hay datos enviados.</td></tr>';
+        } else {
+            // Tomar las últimas 10 (asumiendo que el backend ya las devuelve ordenadas)
+            for (const submission of latestSubmissions) {
+                const row = document.createElement('tr');
+                
+                const time = new Date(submission.timestamp).toLocaleTimeString('es-ES', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                
+                const email = submission.email;
+                const device = submission.device_info ? submission.device_info.deviceType : 'Desconocido';
+
+                row.innerHTML = `<td>${time}</td><td>${email}</td><td>${device}</td>`;
+                tableBody.appendChild(row);
             }
         }
+    }
 
-        // Llama a la función cuando la página cargue
-        window.onload = updateStats;
-    </script>
+    // Llama a la función cuando la página cargue
+    window.onload = fetchStats;
+
+    // Actualiza las estadísticas cada 5 segundos
+    setInterval(fetchStats, 5000);
+</script>
 </body>
 </html>
